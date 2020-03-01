@@ -1,9 +1,12 @@
 from typing import Dict, Tuple
 
-STOP = 'Stop'
-START = 'AUG'
+PURINES: Tuple[str] = ('A', 'G')
+PYRIMIDINES: Tuple[str] = ('T', 'C')
 
-CODON_SIZE = 3
+STOP: str = 'Stop'
+START: str = 'AUG'
+
+CODON_SIZE: int = 3
 
 CODON_MAP: Dict[str, str] = {
     "UUU": "F",
