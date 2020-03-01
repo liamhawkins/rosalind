@@ -151,5 +151,38 @@ def open_reading_frames(s: str) -> Set[str]:
     return {y.sequence for x in fasta.translate_all_orfs().values() for y in x}
 
 
+def RNA_splicing(s: str) -> None:
+    """
+    Given: A DNA string s (of length at most 1 kbp) and a collection of substrings of s acting as introns. All strings
+    are given in FASTA format.
+    Return: A protein string resulting from transcribing and translating the exons of s. (Note: Only one solution will
+    exist for the dataset provided.)
+    """
+    fastas = Fasta.from_str(s)
+    main = fastas.pop(0)
+    for f in fastas:
+        main = main.simple_splice(f)
+    for f in main.translate_first_orf():
+        print(f)
+
+
+def finding_a_spliced_motif(inp: str) -> None:
+    """
+    Given: Two DNA strings s and t (each of length at most 1 kbp) in FASTA format.
+    Return: One collection of indices of s in which the symbols of t appear as a subsequence of s. If multiple solutions exist, you may return any one.
+    """
+    s: str
+    t: str
+    s, t = [x.sequence for x in Fasta.from_str(inp)]
+
+    first_index_group: List[str] = []
+    last_ind: int = 0
+    for x in t:
+        ind: int = s.find(x, last_ind+1) + 1
+        first_index_group.append(str(ind))
+        last_ind = ind
+    print(' '.join(first_index_group))
+
+
 if __name__ == '__main__':
     pass

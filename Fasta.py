@@ -1,5 +1,5 @@
 from functools import reduce
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 
 from resources import CODON_MAP, AA_WEIGHTS, START, STOP_CODONS, CODON_SIZE, COMPLEMENT_DNA, \
     COMPLEMENT_RNA
@@ -151,6 +151,18 @@ class Fasta:
         else:
             # TODO: Do this more robustly, raise error on non-amino acid letters
             return PROTEIN
+
+    def simple_splice(self, s: Union[str, 'Fasta'], force: bool = False) -> "Fasta":
+        """Remove sequences s from self.sequence"""
+        if isinstance(s, Fasta):
+            s = s.sequence
+        if s in self.sequence:
+            new_seq = self.sequence.replace(s, '')
+        elif not force:
+            raise ValueError('Sequence cannot be spliced because it is not in Fasta')
+        else:
+            new_seq = s
+        return Fasta(id_=f'{self.id}_spliced', sequence=new_seq)
 
 
 if __name__ == "__main__":
