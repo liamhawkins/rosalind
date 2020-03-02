@@ -34,9 +34,9 @@ class Fasta:
     def __repr__(self) -> str:
         return f'Fasta({self.id}, {self.sequence})'
 
-    def __eq__(self, other: 'Fasta') -> bool:
-        if not isinstance(self, Fasta) or not isinstance(other, Fasta):
-            raise TypeError(f'Fasta cannot be compared with type {type(other)}')
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Fasta):
+            return NotImplemented()
         return self.sequence == other.sequence
 
     def __len__(self) -> int:
@@ -113,6 +113,8 @@ class Fasta:
             return []
 
         stop_indices: List[int] = [i for i, x in enumerate(codons) if x in STOP_CODONS]
+        if not stop_indices:
+            return []
         start_indices: List[int] = [i for i, x in enumerate(codons) if x == START and i < max(stop_indices)]
 
         peptides: List[str] = []
