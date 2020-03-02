@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 
-PURINES: Tuple[str] = ('A', 'G')
-PYRIMIDINES: Tuple[str] = ('T', 'C')
+PURINES: Tuple[str, str] = ('A', 'G')
+PYRIMIDINES: Tuple[str, str] = ('T', 'C')
 
 STOP: str = 'Stop'
 START: str = 'AUG'

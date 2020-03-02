@@ -1,7 +1,7 @@
 from functools import reduce
 from typing import List, Optional, Dict, Union
 
-from resources import CODON_MAP, AA_WEIGHTS, START, STOP_CODONS, CODON_SIZE, COMPLEMENT_DNA, \
+from tools.resources import CODON_MAP, AA_WEIGHTS, START, STOP_CODONS, CODON_SIZE, COMPLEMENT_DNA, \
     COMPLEMENT_RNA
 
 
