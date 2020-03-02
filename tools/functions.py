@@ -1,5 +1,6 @@
 from typing import Dict
 
+from tools.Fasta import Fasta
 from tools.resources import PURINES, PYRIMIDINES, COMPLEMENT_DNA, COMPLEMENT_RNA
 
 
@@ -32,3 +33,7 @@ def is_complement(base1: str, base2: str, type: str = 'DNA') -> bool:
     else:
         raise ValueError('type must be RNA or DNA')
     return comp_dict[base1.upper()] == base2.upper()
+
+
+def overlap(f1: Fasta, f2: Fasta, overlap: int):
+    return f1[-overlap:] == f2[:overlap]

@@ -28,11 +28,22 @@ class Fasta:
         self.sequence = sequence.upper()
         self.type: str = self._infer_type()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'>{self.id}\n{self.sequence}'
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Fasta({self.id}, {self.sequence})'
+
+    def __eq__(self, other: 'Fasta') -> bool:
+        if not isinstance(self, Fasta) or not isinstance(other, Fasta):
+            raise TypeError(f'Fasta cannot be compared with type {type(other)}')
+        return self.sequence == other.sequence
+
+    def __len__(self) -> int:
+        return len(self.sequence)
+
+    def __getitem__(self, item):
+        return self.sequence[item]
 
     @property
     def gc(self) -> float:
