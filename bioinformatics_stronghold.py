@@ -198,5 +198,23 @@ def transition_transversion_ratio(s: Fasta, t: Fasta) -> float:
     return transition/transversion
 
 
+def calculate_expected_offspring(s):
+    """
+    Given: Six nonnegative integers, each of which does not exceed 20,000. The integers correspond to the number of
+    couples in a population possessing each genotype pairing for a given factor. In order, the six given integers
+    represent the number of couples having the following genotypes:
+    AA-AA
+    AA-Aa
+    AA-aa
+    Aa-Aa
+    Aa-aa
+    aa-aa
+    Return: The expected number of offspring displaying the dominant phenotype in the next generation, under the
+    assumption that every couple has exactly two offspring.
+    """
+    s = [int(x) for x in s.split()]
+    return (s[0] + s[1] + s[2] + (s[3]*0.75) + (s[4]*0.5)) * 2
+
+
 if __name__ == '__main__':
-    pass
+    print(calculate_expected_offspring("19777 17806 19543 19861 19821 19960"))
