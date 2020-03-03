@@ -2,9 +2,8 @@ from itertools import permutations
 from typing import List, Tuple, Dict, Set
 
 from tools.Fasta import Fasta
-from tools.functions import is_transition, is_transversion, overlap, is_leading_edge, \
-    is_next_edge, edges_to_fasta, is_edge
-from tools.types import Edge
+from tools.Graph import Graph
+from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads
 from tools.resources import CODON_MAP
 
 
@@ -248,29 +247,33 @@ def overlap_graphs(s):
 def genome_assembly_as_shortest_superstring(s: str) -> str:
     fastas: List[Fasta] = Fasta.from_str(s)
     min_overlap: int = min([len(x) for x in fastas]) // 2
-    edges: List[Edge] = []
 
-    # Create all edges with minimum overlap of half read length
-    for f1, f2 in permutations(fastas, r=2):
-        if is_edge(f1, f2, min_overlap):
-            edges.append((f1, f2))
+    def overlap(n1, n2):
+        return n1 != n2 and max_overlap(n1, n2) > min_overlap
 
-    # Find leading edge (edge with no connecting edge 'before' it)
-    ordered_edges: List[Edge] = []
-    for i, e in enumerate(edges):
-        if is_leading_edge(e, edges):
-            ordered_edges.append(edges.pop(i))
+    g = Graph(directed=True)
+    g.add_nodes(fastas)
+    g.join_nodes_by_func(overlap)
 
-    # Iterate over edges, placing them in order, until all edges are placed
-    while len(edges) > 0:
-        for i, e in enumerate(edges):
-            if is_next_edge(ordered_edges[-1], e):
-                ordered_edges.append(edges.pop(i))
-                break
+    if g.is_linear():
+        order = [g.starting_nodes()[0]]
 
-    # Join all ordered edges into single sequence
-    return edges_to_fasta(ordered_edges).sequence
+        while len(order) < len(g.edges) + 1:
+            order.append(order[-1].outgoing_nodes[0])
+
+        ret = order[0].obj
+        for f in order[1:]:
+            ret = join_reads(ret, f.obj)
+        return ret.sequence
 
 
 if __name__ == '__main__':
-    pass
+    in_: str = """>Rosalind_56
+    ATTAGACCTG
+    >Rosalind_57
+    CCTGCCGGAA
+    >Rosalind_58
+    AGACCTGCCG
+    >Rosalind_59
+    GCCGGAATAC"""
+    print(genome_assembly_as_shortest_superstring(in_))
