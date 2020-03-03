@@ -1,7 +1,10 @@
+from itertools import permutations
 from typing import List, Tuple, Dict, Set
 
 from tools.Fasta import Fasta
-from tools.functions import is_transition, is_transversion, overlap
+from tools.functions import is_transition, is_transversion, overlap, is_leading_edge, \
+    is_next_edge, edges_to_fasta, is_edge
+from tools.types import Edge
 from tools.resources import CODON_MAP
 
 
@@ -240,6 +243,33 @@ def overlap_graphs(s):
             if f1 != f2 and overlap(f1, f2, 3):
                 edges.append(f'{f1.id} {f2.id}')
     return '\n'.join(edges)
+
+
+def genome_assembly_as_shortest_superstring(s: str) -> str:
+    fastas: List[Fasta] = Fasta.from_str(s)
+    min_overlap: int = min([len(x) for x in fastas]) // 2
+    edges: List[Edge] = []
+
+    # Create all edges with minimum overlap of half read length
+    for f1, f2 in permutations(fastas, r=2):
+        if is_edge(f1, f2, min_overlap):
+            edges.append((f1, f2))
+
+    # Find leading edge (edge with no connecting edge 'before' it)
+    ordered_edges: List[Edge] = []
+    for i, e in enumerate(edges):
+        if is_leading_edge(e, edges):
+            ordered_edges.append(edges.pop(i))
+
+    # Iterate over edges, placing them in order, until all edges are placed
+    while len(edges) > 0:
+        for i, e in enumerate(edges):
+            if is_next_edge(ordered_edges[-1], e):
+                ordered_edges.append(edges.pop(i))
+                break
+
+    # Join all ordered edges into single sequence
+    return edges_to_fasta(ordered_edges).sequence
 
 
 if __name__ == '__main__':

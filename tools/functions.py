@@ -1,7 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 
 from tools.Fasta import Fasta
 from tools.resources import PURINES, PYRIMIDINES, COMPLEMENT_DNA, COMPLEMENT_RNA
+from tools.types import Edge
 
 
 def is_purine(base: str) -> bool:
@@ -35,5 +36,48 @@ def is_complement(base1: str, base2: str, type: str = 'DNA') -> bool:
     return comp_dict[base1.upper()] == base2.upper()
 
 
-def overlap(f1: Fasta, f2: Fasta, overlap: int):
+def overlap(f1: Fasta, f2: Fasta, overlap: int) -> bool:
     return f1[-overlap:] == f2[:overlap]
+
+
+def max_overlap(f1: Fasta, f2: Fasta) -> int:
+    min_size: int = min([len(f1), len(f2)])  # Get length of shortest seq
+    max_: int = 0
+    for i in range(1, min_size + 1):
+        if overlap(f1, f2, overlap=i):
+            max_ = i
+    return max_
+
+
+def join_reads(f1: Fasta, f2: Fasta, min_overlap: int = 0) -> Fasta:
+    max_o = max_overlap(f1, f2)
+    if max_o < min_overlap:
+        raise ValueError(f'Reads do not overlap by min_overlap: {min_overlap}')
+    return Fasta(id_=f'{f1.id}_{f2.id}', sequence=f'{f1.sequence}{f2.sequence[max_o:]}')
+
+
+def is_leading_edge(e1: Edge, edges: List[Edge]) -> bool:
+    for e2 in edges:
+        if e1 != e2 and e1[0] == e2[1]:
+            return False
+    return True
+
+
+def is_next_edge(e1: Edge, e2: Edge) -> bool:
+    return e1[1] == e2[0]
+
+
+def edges_to_fasta(edges: List[Edge]) -> Fasta:
+    ordered_nodes = []
+    for e in edges:
+        ordered_nodes.extend(e)
+
+    # Join sequences
+    ret = ordered_nodes[0]
+    for j in ordered_nodes[1:]:
+        ret = join_reads(ret, j)
+    return ret
+
+
+def is_edge(f1, f2, min_overlap):
+    return f1 != f2 and max_overlap(f1, f2) > min_overlap

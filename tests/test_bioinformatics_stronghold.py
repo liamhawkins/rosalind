@@ -7,7 +7,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     complementing_a_strand_of_DNA, counting_point_mutations, computing_gc_content, finding_a_motif_in_DNA, \
     translating_RNA_into_protein, calculating_protein_mass, mendels_first_law, inferring_mRNA_from_protein, \
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
-    transition_transversion_ratio, calculate_expected_offspring, overlap_graphs
+    transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, genome_assembly_as_shortest_superstring
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -143,6 +143,19 @@ GGGTGGG"""
 Rosalind_0498 Rosalind_0442
 Rosalind_2391 Rosalind_2323"""
     assert overlap_graphs(in_) == out
+
+
+def test_genome_assembly_as_shortest_superstring() -> None:
+    in_: str = """>Rosalind_56
+ATTAGACCTG
+>Rosalind_57
+CCTGCCGGAA
+>Rosalind_58
+AGACCTGCCG
+>Rosalind_59
+GCCGGAATAC"""
+    out: str = 'ATTAGACCTGCCGGAATAC'
+    assert genome_assembly_as_shortest_superstring(in_) == out
 
 
 if __name__ == '__main__':
