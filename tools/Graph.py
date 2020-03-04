@@ -2,6 +2,10 @@ from itertools import permutations
 from typing import List, Any, Union, Tuple
 
 
+class NodeNotInGraphError(Exception):
+    pass
+
+
 class Node:
     def __init__(self, obj: Any) -> None:
         self.obj: Any = obj
@@ -87,8 +91,11 @@ class Graph:
         self.edges: List[Edge] = []
         self.directed: bool = directed
 
-    def __contains__(self, item):
-        return item in [n.obj for n in self.nodes]
+    def __contains__(self, item: Any) -> bool:
+        if isinstance(item, Node):
+            return item.obj in [n.obj for n in self.nodes]
+        else:
+            return item in [n.obj for n in self.nodes]
 
     def add_node(self, obj: Any) -> Node:
         if obj in self:
@@ -106,6 +113,8 @@ class Graph:
         return nodes
 
     def add_edge(self, node1: Node, node2: Node) -> Edge:
+        if node1 not in self or node2 not in self:
+            raise NodeNotInGraphError("Can't create edge between one or more nodes not in the graph")
         edge: Edge = Edge(node1, node2, directed=self.directed)
         self.edges.append(edge)
         return edge
