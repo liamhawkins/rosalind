@@ -21,12 +21,7 @@ def degree_array(s: str) -> str:
     Given: A simple graph with n≤103 vertices in the edge list format.
     Return: An array D[1..n] where D[i] is the degree of vertex i.
     """
-    edge_list: List[tuple] = [(int(a), int(b)) for a, b in [c.split() for c in [j for j in s.split('\n')]]]
-    g = Graph()
-    # Construct graph
-    for e in edge_list[1:]:  # First line is num of nodes and edges
-        node1, node2 = g.add_nodes(e)
-        g.add_edge(node1, node2)
+    g = Graph.from_str(s)
 
     # Iterate over nodes, and join node degree into output string
     degrees: List[str] = []

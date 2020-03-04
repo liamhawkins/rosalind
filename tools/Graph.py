@@ -12,6 +12,7 @@ class Node:
         self.edges: List[Edge] = []
         self.incoming_nodes: List[Node] = []
         self.outgoing_nodes: List[Node] = []
+        self.neighbors: List[Node] = []
 
     def __str__(self) -> str:
         return str(self.obj)
@@ -44,10 +45,16 @@ class Node:
         self.edges.append(edge)
 
     def add_outgoing(self, node: 'Node') -> None:
-        self.outgoing_nodes.append(node)
+        if node not in self.outgoing_nodes:
+            self.outgoing_nodes.append(node)
+        if node not in self.neighbors:
+            self.neighbors.append(node)
 
     def add_incoming(self, node: 'Node') -> None:
-        self.incoming_nodes.append(node)
+        if node not in self.incoming_nodes:
+            self.incoming_nodes.append(node)
+        if node not in self.neighbors:
+            self.neighbors.append(node)
 
     def is_leaf(self):
         return self.degree == 1
@@ -145,6 +152,32 @@ class Graph:
             if n.obj == obj:
                 return n
         raise ValueError(f'{repr(obj)} not in graph')
+
+    @classmethod
+    def from_str(cls, s: str) -> 'Graph':
+        """
+        Construct graph from string in edge list format.
+        e.g
+            5 4
+            1 2
+            2 3
+            4 3
+            2 4
+        """
+        inp: List[tuple] = [(int(a), int(b)) for a, b in [c.split() for c in [j for j in s.split('\n')]]]
+        num_nodes, num_edges = inp[0]
+        edge_list = inp[1:]
+        g: Graph = Graph()
+
+        # Create nodes according to num_nodes
+        g.add_nodes(list(range(1, num_nodes + 1)))
+
+        # Create edges according to edge_list
+        for e in edge_list:  # First line is num of nodes and edges
+            node1 = g.get_node_by_obj(e[0])
+            node2 = g.get_node_by_obj(e[1])
+            g.add_edge(node1, node2)
+        return g
 
 
 if __name__ == '__main__':
