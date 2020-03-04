@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from tools.Fasta import Fasta
 from tools.resources import PURINES, PYRIMIDINES, COMPLEMENT_DNA, COMPLEMENT_RNA
@@ -66,6 +66,17 @@ def bin_search(i: int, sorted_array: List[int], abs_start_index: int = 0) -> int
         return bin_search(i, sorted_array[:mid_index], abs_start_index=abs_start_index)
     else:
         return bin_search(i, sorted_array[mid_index:], abs_start_index=abs_start_index + mid_index)
+
+
+def ins_sort(array: List[int]) -> Tuple[List[int], int]:
+    swap_count: int = 0
+    for i in range(1, len(array)):
+        k: int = i
+        while k > 0 and array[k] < array[k - 1]:
+            array[k - 1], array[k] = array[k], array[k - 1]  # Swap
+            swap_count += 1
+            k = k - 1
+    return array, swap_count
 
 
 if __name__ == '__main__':

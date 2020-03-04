@@ -1,7 +1,7 @@
 from typing import List
 
 from tools.Graph import Graph
-from tools.functions import bin_search
+from tools.functions import bin_search, ins_sort
 
 
 def fibonacci_numbers(n: int) -> int:
@@ -50,6 +50,16 @@ def binary_search(s: str) -> str:
         ret.append(str(bin_search(num, sorted_array)))
 
     return ' '.join(ret)
+
+
+def insertion_sort(s: str) -> int:
+    """
+    Given: A positive integer n≤103 and an array A[1..n] of integers.
+    Return: The number of swaps performed by insertion sort algorithm on A[1..n].
+    """
+    array = [int(x) for x in s.split('\n')[1].split()]
+    _, swap_count = ins_sort(array)
+    return swap_count
 
 
 if __name__ == '__main__':
