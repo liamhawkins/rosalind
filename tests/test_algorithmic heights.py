@@ -1,6 +1,6 @@
 import unittest
 
-from algorithmic_heights import fibonacci_numbers, degree_array, binary_search, insertion_sort
+from algorithmic_heights import fibonacci_numbers, degree_array, binary_search, insertion_sort, double_degree_array
 
 
 def test_fibonacci_numbers() -> None:
@@ -36,6 +36,16 @@ def test_insertion_sort() -> None:
 6 10 4 5 1 2"""
     out: int = 12
     assert insertion_sort(in_) == out
+
+
+def test_double_degree_array() -> None:
+    in_: str = """5 4
+1 2
+2 3
+4 3
+2 4"""
+    out: str = '3 5 5 5 0'
+    assert double_degree_array(in_) == out
 
 
 if __name__ == '__main__':

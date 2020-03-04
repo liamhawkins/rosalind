@@ -52,10 +52,34 @@ def insertion_sort(s: str) -> int:
     Given: A positive integer n≤103 and an array A[1..n] of integers.
     Return: The number of swaps performed by insertion sort algorithm on A[1..n].
     """
-    array = [int(x) for x in s.split('\n')[1].split()]
+    array: List[int] = [int(x) for x in s.split('\n')[1].split()]
+    swap_count: int
     _, swap_count = ins_sort(array)
     return swap_count
 
 
+def double_degree_array(s: str) -> str:
+    """
+    Given: A simple graph with n≤103 vertices in the edge list format.
+    Return: An array D[1..n] where D[i] is the sum of the degrees of i's neighbors.
+    """
+    g = Graph.from_str(s)
+
+    # Iterate over nodes, and join node degree into output string
+    double_degrees: List[str] = []
+    for i in range(1, len(g.nodes) + 1):
+        neighbour_degree_sum = 0
+        node = g.get_node_by_obj(i)
+        neighbour_degree_sum = sum([n.degree for n in node.neighbors])
+        double_degrees.append(str(neighbour_degree_sum))
+
+    return ' '.join(double_degrees)
+
+
 if __name__ == '__main__':
-    pass
+    in_: str = """5 4
+1 2
+2 3
+4 3
+2 4"""
+    print(double_degree_array(in_))
