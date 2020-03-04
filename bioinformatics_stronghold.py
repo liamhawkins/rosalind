@@ -265,6 +265,8 @@ def genome_assembly_as_shortest_superstring(s: str) -> str:
         for f in order[1:]:
             ret = join_reads(ret, f.obj)
         return ret.sequence
+    else:
+        raise ValueError('Genome cannot be assembled from non-linear graph')
 
 
 if __name__ == '__main__':

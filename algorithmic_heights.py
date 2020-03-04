@@ -1,6 +1,7 @@
 from typing import List
 
 from tools.Graph import Graph
+from tools.functions import bin_search
 
 
 def fibonacci_numbers(n: int) -> int:
@@ -32,6 +33,23 @@ def degree_array(s: str) -> str:
     for i in range(1, len(g.nodes)+1):
         degrees.append(str(g.get_node_by_obj(i).degree))
     return ' '.join(degrees)
+
+
+def binary_search(s: str) -> str:
+    """
+    Given: Two positive integers n≤105 and m≤105, a sorted array A[1..n] of integers from −105 to 105 and a list of m
+    integers −105≤k1,k2,…,km≤105.
+    Return: For each ki, output an index 1≤j≤n s.t. A[j]=ki or "-1" if there is no such index.
+    """
+    inp: List[str] = s.split('\n')
+    sorted_array: List[int] = [int(x) for x in inp[2].split()]
+    m: List[int] = [int(x) for x in inp[3].split()]
+
+    ret = []
+    for num in m:
+        ret.append(str(bin_search(num, sorted_array)))
+
+    return ' '.join(ret)
 
 
 if __name__ == '__main__':

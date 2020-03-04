@@ -1,5 +1,5 @@
 from itertools import permutations
-from typing import List, Any
+from typing import List, Any, Union, Tuple
 
 
 class Node:
@@ -98,7 +98,7 @@ class Graph:
         self.nodes.append(node)
         return node
 
-    def add_nodes(self, objs: List[Any]) -> List[Node]:
+    def add_nodes(self, objs: Union[List[Any], Tuple[Any, ...]]) -> List[Node]:
         nodes: List[Node] = []
         for o in objs:
             node = self.add_node(o)
@@ -132,11 +132,10 @@ class Graph:
         return all([x.degree <= 2 for x in self.nodes]) and len(self.starting_nodes()) == 1 and len(self.ending_nodes()) == 1
 
     def get_node_by_obj(self, obj: Any) -> Node:
-        if obj not in self:
-            raise ValueError(f'{repr(obj)} not in graph')
         for n in self.nodes:
             if n.obj == obj:
                 return n
+        raise ValueError(f'{repr(obj)} not in graph')
 
 
 if __name__ == '__main__':

@@ -53,3 +53,21 @@ def join_reads(f1: Fasta, f2: Fasta, min_overlap: int = 0) -> Fasta:
     if max_o < min_overlap:
         raise ValueError(f'Reads do not overlap by min_overlap: {min_overlap}')
     return Fasta(id_=f'{f1.id}_{f2.id}', sequence=f'{f1.sequence}{f2.sequence[max_o:]}')
+
+
+def bin_search(i: int, sorted_array: List[int], abs_start_index: int = 0) -> int:
+    mid_index = len(sorted_array) // 2
+    mid_value = sorted_array[mid_index]
+    if len(sorted_array) == 1 and i != mid_value:
+        return -1
+    elif i == mid_value:
+        return mid_index + abs_start_index + 1
+    elif i < mid_value:
+        return bin_search(i, sorted_array[:mid_index], abs_start_index=abs_start_index)
+    else:
+        return bin_search(i, sorted_array[mid_index:], abs_start_index=abs_start_index + mid_index)
+
+
+if __name__ == '__main__':
+    sorted_array = [0,1,2,3,4,5,6,7]
+    print(bin_search(8, sorted_array))
