@@ -15,6 +15,12 @@ class Node:
     def __repr__(self) -> str:
         return f'Node({repr(self.obj)})'
 
+    def __hash__(self):
+        return hash(self.obj)
+
+    def __contains__(self, item):
+        return item == self.obj
+
     @property
     def degree(self) -> int:
         return len(self.edges)
@@ -81,15 +87,23 @@ class Graph:
         self.edges: List[Edge] = []
         self.directed: bool = directed
 
+    def __contains__(self, item):
+        return item in [n.obj for n in self.nodes]
+
     def add_node(self, obj: Any) -> Node:
+        if obj in self:
+            print(f'{repr(obj)} already in graph')
+            return self.get_node_by_obj(obj)
         node: Node = Node(obj)
         self.nodes.append(node)
         return node
 
     def add_nodes(self, objs: List[Any]) -> List[Node]:
+        nodes: List[Node] = []
         for o in objs:
-            self.add_node(o)
-        return self.nodes
+            node = self.add_node(o)
+            nodes.append(node)
+        return nodes
 
     def add_edge(self, node1: Node, node2: Node) -> Edge:
         edge: Edge = Edge(node1, node2, directed=self.directed)
@@ -117,6 +131,13 @@ class Graph:
     def is_linear(self) -> bool:
         return all([x.degree <= 2 for x in self.nodes]) and len(self.starting_nodes()) == 1 and len(self.ending_nodes()) == 1
 
+    def get_node_by_obj(self, obj: Any) -> Node:
+        if obj not in self:
+            raise ValueError(f'{repr(obj)} not in graph')
+        for n in self.nodes:
+            if n.obj == obj:
+                return n
+
 
 if __name__ == '__main__':
     def is_double(a, b):
@@ -124,6 +145,7 @@ if __name__ == '__main__':
 
     g = Graph(directed=True)
     n1 = g.add_node(4)
+    n2 = g.add_node(4)
     n2 = g.add_node(2)
     n3 = g.add_node(8)
     n4 = g.add_node(16)
