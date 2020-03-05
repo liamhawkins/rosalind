@@ -3,13 +3,14 @@ from typing import List, Tuple, Dict, Set
 
 from tools.Fasta import Fasta
 from tools.Graph import Graph
-from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads
+from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming
 from tools.resources import CODON_MAP
 
 
 def counting_DNA_nucleotides(s: str) -> str:
     """
     Given: A DNA string s of length at most 1000 nt.
+
     Return: Four integers (separated by spaces) counting the respective number of times that the symbols 'A', 'C', 'G',
     and 'T' occur in s.
     """
@@ -20,6 +21,7 @@ def counting_DNA_nucleotides(s: str) -> str:
 def transcribing_DNA_into_RNA(t: str) -> str:
     """
     Given: A DNA string t having length at most 1000 nt.
+
     Return: The transcribed RNA string of t.
     """
     return t.replace('T', 'U')
@@ -28,6 +30,7 @@ def transcribing_DNA_into_RNA(t: str) -> str:
 def complementing_a_strand_of_DNA(s: str) -> str:
     """
     Given: A DNA string s of length at most 1000 bp.
+
     Return: The reverse complement s^c of s.
     """
     comp: Dict[str, str] = {
@@ -42,19 +45,18 @@ def complementing_a_strand_of_DNA(s: str) -> str:
 def counting_point_mutations(s: str) -> int:
     """
     Given: Two DNA strings s and t of equal length (not exceeding 1 kbp).
+
     Return: The Hamming distance dH(s,t).
     """
     t: str
     s, t = [x.strip() for x in s.split('\n')]
-    num: int = 0
-    for x, y in zip(s, t):
-        num += x != y
-    return num
+    return hamming(s, t)
 
 
 def computing_gc_content(s: str) -> str:
     """
     Given: At most 10 DNA strings in FASTA format (of length at most 1 kbp each).
+
     Return: The ID of the string having the highest GC-content, followed by the GC-content of that string.
     """
     fastas: List[Fasta] = Fasta.from_str(s)
@@ -68,6 +70,7 @@ def computing_gc_content(s: str) -> str:
 def finding_a_motif_in_DNA(s: str) -> str:
     """
     Given: Two DNA strings s and t (each of length at most 1 kbp).
+
     Return: All locations of t as a substring of s.
     """
     t: str
@@ -82,6 +85,7 @@ def finding_a_motif_in_DNA(s: str) -> str:
 def translating_RNA_into_protein(s: str) -> str:
     """
     Given: An RNA string s corresponding to a strand of mRNA (of length at most 10 kbp).
+
     Return: The protein string encoded by s.
     """
     fasta: Fasta = Fasta('test', s)
@@ -92,6 +96,7 @@ def translating_RNA_into_protein(s: str) -> str:
 def calculating_protein_mass(s: str) -> float:
     """
     Given: A protein string P of length at most 1000 aa.
+
     Return: The total weight of P. Consult the monoisotopic mass table.
     """
     fasta: Fasta = Fasta('test', s)
@@ -102,6 +107,7 @@ def mendels_first_law(s: str) -> float:
     """
     Given: Three positive integers k, m, and n, representing a population containing k+m+n organisms: k individuals
     are homozygous dominant for a factor, m are heterozygous, and n are homozygous recessive.
+
     Return: The probability that two randomly selected mating organisms will produce an individual possessing a
     dominant allele (and thus displaying the dominant phenotype). Assume that any two organisms can mate.
     """
@@ -128,6 +134,7 @@ def mendels_first_law(s: str) -> float:
 def inferring_mRNA_from_protein(s: str) -> int:
     """
     Given: A protein string of length at most 1000 aa.
+
     Return: The total number of different RNA strings from which the protein could have been translated,
     modulo 1,000,000. (Don't neglect the importance of the stop codon in protein translation.)
     """
@@ -142,6 +149,7 @@ def inferring_mRNA_from_protein(s: str) -> int:
 def rabbits_and_recurrance_relations(s: str) -> int:
     """
     Given: Positive integers n≤40 and k≤5.
+
     Return: The total number of rabbit pairs that will be present after n months, if we begin with 1 pair and in each
     generation, every pair of reproduction-age rabbits produces a litter of k rabbit pairs (instead of only 1 pair).
     """
@@ -162,6 +170,7 @@ def rabbits_and_recurrance_relations(s: str) -> int:
 def open_reading_frames(s: str) -> Set[str]:
     """
     Given: A DNA string s of length at most 1 kbp in FASTA format.
+
     Return: Every distinct candidate protein string that can be translated from ORFs of s. Strings can be returned in
     any order.
     """
@@ -173,6 +182,7 @@ def RNA_splicing(s: str) -> str:
     """
     Given: A DNA string s (of length at most 1 kbp) and a collection of substrings of s acting as introns. All strings
     are given in FASTA format.
+
     Return: A protein string resulting from transcribing and translating the exons of s. (Note: Only one solution will
     exist for the dataset provided.)
     """
@@ -186,6 +196,7 @@ def RNA_splicing(s: str) -> str:
 def finding_a_spliced_motif(inp: str) -> str:
     """
     Given: Two DNA strings s and t (each of length at most 1 kbp) in FASTA format.
+
     Return: One collection of indices of s in which the symbols of t appear as a subsequence of s. If multiple solutions exist, you may return any one.
     """
     s: str
@@ -204,6 +215,7 @@ def finding_a_spliced_motif(inp: str) -> str:
 def transition_transversion_ratio(s: str) -> float:
     """
     Given: Two DNA strings s1 and s2 of equal length (at most 1 kbp).
+
     Return: The transition/transversion ratio R(s1,s2).
     """
     fastas = Fasta.from_str(s)
@@ -227,6 +239,7 @@ def calculate_expected_offspring(s: str) -> float:
     Aa-Aa
     Aa-aa
     aa-aa
+
     Return: The expected number of offspring displaying the dominant phenotype in the next generation, under the
     assumption that every couple has exactly two offspring.
     """
@@ -273,10 +286,38 @@ def completing_a_tree(s: str) -> int:
     """
     Given: A positive integer n (n≤1000) and an adjacency list corresponding to a graph on n nodes that contains no
     cycles.
+
     Return: The minimum number of edges that can be added to the graph to produce a tree.
     """
     g: Graph = Graph.from_str(s)
     return len(g.disconnected_subgraphs()) - 1
+
+
+def error_correction_in_reads(s: str) -> str:
+    """
+    Given: A collection of up to 1000 reads of equal length (at most 50 bp) in FASTA format. Some of these reads were
+    generated with a single-nucleotide error. For each read s in the dataset, one of the following applies:
+    s was correctly sequenced and appears in the dataset at least twice (possibly as a reverse complement);
+    s is incorrect, it appears in the dataset exactly once, and its Hamming distance is 1 with respect to exactly one
+    correct read in the dataset (or its reverse complement).
+
+    Return: A list of all corrections in the form "[old read]->[new read]". (Each correction must be a single symbol
+    substitution, and you may return the corrections in any order.)
+    """
+    fastas: List[Fasta] = Fasta.from_str(s)
+    rev_comp_fastas: List[Fasta] = [f.reverse_complement() for f in fastas]
+    error_reads: List[Fasta] = list()
+    for f in fastas:
+        if fastas.count(f) + rev_comp_fastas.count(f) == 1:
+            error_reads.append(f)
+
+    all_reads: Set[Fasta] = set(fastas + rev_comp_fastas) - set(error_reads)
+    ret: List[str] = []
+    for read in error_reads:
+        hamming_1 = [hm for hm in all_reads if hamming(hm.sequence, read.sequence) == 1][0]
+        ret.append(f'{read.sequence}->{hamming_1.sequence}')
+
+    return '\n'.join(ret)
 
 
 if __name__ == '__main__':

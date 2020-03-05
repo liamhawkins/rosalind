@@ -8,7 +8,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     translating_RNA_into_protein, calculating_protein_mass, mendels_first_law, inferring_mRNA_from_protein, \
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
-    genome_assembly_as_shortest_superstring, completing_a_tree
+    genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -169,6 +169,31 @@ def test_completing_a_tree() -> None:
 7 9"""
     out: int = 3
     assert completing_a_tree(in_) == out
+
+
+def test_error_correction_in_reads() -> None:
+    in_: str = """>Rosalind_52
+TCATC
+>Rosalind_44
+TTCAT
+>Rosalind_68
+TCATC
+>Rosalind_28
+TGAAA
+>Rosalind_95
+GAGGA
+>Rosalind_66
+TTTCA
+>Rosalind_33
+ATCAA
+>Rosalind_21
+TTGAT
+>Rosalind_18
+TTTCC"""
+    out: str = """TTCAT->TTGAT
+GAGGA->GATGA
+TTTCC->TTTCA"""
+    assert error_correction_in_reads(in_) == out
 
 
 if __name__ == '__main__':

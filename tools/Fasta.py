@@ -19,14 +19,14 @@ PROTEIN: str = 'PROTEIN'
 
 
 class Fasta:
-    def __init__(self, id_: str = 'noid', sequence: str = ''):
+    def __init__(self, id_: str = 'noid', sequence: str = '', type: Optional[str] = None):
         if ' ' in id_:
             raise ValueError('No spaces allowed in id')
         if sequence == '':
             raise ValueError('Sequence cannot be empty')
         self.id = id_
         self.sequence = sequence.upper()
-        self.type: str = self._infer_type()
+        self.type: str = self._infer_type() if not type else type
 
     def __str__(self) -> str:
         return f'>{self.id}\n{self.sequence}'
@@ -44,6 +44,9 @@ class Fasta:
 
     def __getitem__(self, item):
         return self.sequence[item]
+
+    def __hash__(self):
+        return hash(self.sequence)
 
     @property
     def gc(self) -> float:
@@ -69,7 +72,7 @@ class Fasta:
     def _complement_sequence(seq: str, type_: str) -> str:
         if type_ not in [DNA, RNA]:
             raise FastaTypeError('Only Fasta with type == DNA or RNA can be complemented')
-        comp_dict: Dict[str, str] = COMPLEMENT_DNA if type == DNA else COMPLEMENT_RNA
+        comp_dict: Dict[str, str] = COMPLEMENT_DNA if type_ == DNA else COMPLEMENT_RNA
         return ''.join([comp_dict[base] for base in seq])
 
     def complement(self) -> "Fasta":
@@ -157,9 +160,9 @@ class Fasta:
         return reduce(lambda x, y: x+y, [AA_WEIGHTS[aa] for aa in self.sequence])
 
     def _infer_type(self) -> str:
-        if set(self.sequence) == set('ATGC'):
+        if set(self.sequence).issubset(set('ATGC')):
             return DNA
-        elif set(self.sequence) == set('AUGC'):
+        elif set(self.sequence).issubset(set('AUGC')):
             return RNA
         else:
             # TODO: Do this more robustly, raise error on non-amino acid letters

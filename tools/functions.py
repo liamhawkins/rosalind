@@ -79,6 +79,13 @@ def ins_sort(array: List[int]) -> Tuple[List[int], int]:
     return array, swap_count
 
 
+def hamming(s: str, t: str) -> int:
+    num: int = 0
+    for x, y in zip(s, t):
+        num += x != y
+    return num
+
+
 if __name__ == '__main__':
     sorted_array = [0,1,2,3,4,5,6,7]
     print(bin_search(8, sorted_array))
