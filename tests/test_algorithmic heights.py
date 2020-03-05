@@ -1,6 +1,7 @@
 import unittest
 
-from algorithmic_heights import fibonacci_numbers, degree_array, binary_search, insertion_sort, double_degree_array
+from algorithmic_heights import fibonacci_numbers, degree_array, binary_search, insertion_sort, double_degree_array, \
+    majority_element
 
 
 def test_fibonacci_numbers() -> None:
@@ -46,6 +47,16 @@ def test_double_degree_array() -> None:
 2 4"""
     out: str = '3 5 5 5 0'
     assert double_degree_array(in_) == out
+
+
+def test_majority_element() -> None:
+    in_: str = """4 8
+5 5 5 5 5 5 5 5
+8 7 7 7 1 7 3 7
+7 1 6 5 10 100 1000 1
+5 1 6 7 1 1 10 1"""
+    out: str = '5 7 -1 -1'
+    assert majority_element(in_) == out
 
 
 if __name__ == '__main__':

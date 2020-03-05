@@ -1,5 +1,5 @@
 from itertools import permutations
-from typing import List, Any, Union, Tuple
+from typing import List, Any, Union, Tuple, Optional, Set
 
 
 class NodeNotInGraphError(Exception):
@@ -164,9 +164,11 @@ class Graph:
             4 3
             2 4
         """
-        inp: List[tuple] = [(int(a), int(b)) for a, b in [c.split() for c in [j for j in s.split('\n')]]]
-        num_nodes, num_edges = inp[0]
-        edge_list = inp[1:]
+        if not s:
+            raise ValueError('Graph cannot be made from empty string')
+        inp: List[str] = [j for j in s.split('\n')]
+        num_nodes = int(inp[0].split()[0])
+        edge_list = [(int(a), int(b)) for a, b in [c.split() for c in inp[1:]]]
         g: Graph = Graph()
 
         # Create nodes according to num_nodes
@@ -179,28 +181,58 @@ class Graph:
             g.add_edge(node1, node2)
         return g
 
+    def disconnected_subgraphs(self) -> List[Set[Node]]:
+        fills: List[Set[Node]] = []
+        for node in self.nodes:
+            f = self.fill_from_node(node)
+            if f not in fills:
+                fills.append(f)
+
+        return fills
+
+    def fill_from_node(self, node: Node, prev: Optional[Node] = None, filled: Optional[Set[Node]] = None) -> Set[Node]:
+        if filled and node in filled:
+            return filled
+
+        if not filled:
+            filled = {node}
+        else:
+            filled.add(node)
+
+        next_nodes: Set[Node]
+        if prev:
+            next_nodes = set(node.neighbors) - {prev}
+        else:
+            next_nodes = set(node.neighbors)
+
+        if len(next_nodes) == 0:
+            return filled
+
+        for neigh in next_nodes:
+            filled.union(self.fill_from_node(neigh, node, filled))
+        return filled
+
 
 if __name__ == '__main__':
-    def is_double(a, b):
-        return a * 2 == b
-
-    g = Graph(directed=True)
-    n1 = g.add_node(4)
-    n2 = g.add_node(4)
+    g = Graph()
+    n1 = g.add_node(1)
     n2 = g.add_node(2)
-    n3 = g.add_node(8)
-    n4 = g.add_node(16)
+    n3 = g.add_node(3)
+    n4 = g.add_node(4)
 
-    g.join_nodes_by_func(is_double)
+    g.add_edge(n1, n2)
+    g.add_edge(n2, n3)
+    g.add_edge(n2, n4)
 
-    print(g.edges)
-    if g.is_linear():
-        order = [g.starting_nodes()[0]]
+    n5 = g.add_node(5)
+    n6 = g.add_node(6)
+    g.add_edge(n5, n6)
 
-        while len(order) < len(g.edges) + 1:
-            order.append(order[-1].outgoing_nodes[0])
+    n7 = g.add_node(7)
 
-        print(order)
+    print(g.disconnected_subgraphs())
+    print(len(g.disconnected_subgraphs()))
+
 
 
 

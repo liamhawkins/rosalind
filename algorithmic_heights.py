@@ -68,7 +68,6 @@ def double_degree_array(s: str) -> str:
     # Iterate over nodes, and join node degree into output string
     double_degrees: List[str] = []
     for i in range(1, len(g.nodes) + 1):
-        neighbour_degree_sum = 0
         node = g.get_node_by_obj(i)
         neighbour_degree_sum = sum([n.degree for n in node.neighbors])
         double_degrees.append(str(neighbour_degree_sum))
@@ -76,10 +75,26 @@ def double_degree_array(s: str) -> str:
     return ' '.join(double_degrees)
 
 
+def majority_element(s: str) -> str:
+    """
+    Given: A positive integer k≤20, a positive integer n≤104, and k arrays of size n containing positive integers not
+    exceeding 105.
+    Return: For each array, output an element of this array occurring strictly more than n/2 times if such element
+    exists, and "-1" otherwise.
+    """
+    inp: List[str] = s.strip().split('\n')
+    n: int = [int(x) for x in inp[0].split()][1]
+    arrays: List[str] = inp[1:]
+    ret: List[str] = []
+    for array in arrays:
+        ints: List[int] = [int(x) for x in array.split()]
+        maj_elem: List[str] = [str(x) for x in set(ints) if ints.count(x) > n/2]
+        if maj_elem:
+            ret.append(maj_elem[0])
+        else:
+            ret.append('-1')
+    return ' '.join(ret)
+
+
 if __name__ == '__main__':
-    in_: str = """5 4
-1 2
-2 3
-4 3
-2 4"""
-    print(double_degree_array(in_))
+    pass

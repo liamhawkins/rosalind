@@ -269,13 +269,15 @@ def genome_assembly_as_shortest_superstring(s: str) -> str:
         raise ValueError('Genome cannot be assembled from non-linear graph')
 
 
+def completing_a_tree(s: str) -> int:
+    """
+    Given: A positive integer n (n≤1000) and an adjacency list corresponding to a graph on n nodes that contains no
+    cycles.
+    Return: The minimum number of edges that can be added to the graph to produce a tree.
+    """
+    g: Graph = Graph.from_str(s)
+    return len(g.disconnected_subgraphs()) - 1
+
+
 if __name__ == '__main__':
-    in_: str = """>Rosalind_56
-    ATTAGACCTG
-    >Rosalind_57
-    CCTGCCGGAA
-    >Rosalind_58
-    AGACCTGCCG
-    >Rosalind_59
-    GCCGGAATAC"""
-    print(genome_assembly_as_shortest_superstring(in_))
+    pass

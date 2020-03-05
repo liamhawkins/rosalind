@@ -7,7 +7,8 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     complementing_a_strand_of_DNA, counting_point_mutations, computing_gc_content, finding_a_motif_in_DNA, \
     translating_RNA_into_protein, calculating_protein_mass, mendels_first_law, inferring_mRNA_from_protein, \
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
-    transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, genome_assembly_as_shortest_superstring
+    transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
+    genome_assembly_as_shortest_superstring, completing_a_tree
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -156,6 +157,18 @@ AGACCTGCCG
 GCCGGAATAC"""
     out: str = 'ATTAGACCTGCCGGAATAC'
     assert genome_assembly_as_shortest_superstring(in_) == out
+
+
+def test_completing_a_tree() -> None:
+    in_: str = """10
+1 2
+2 8
+4 10
+5 9
+6 10
+7 9"""
+    out: int = 3
+    assert completing_a_tree(in_) == out
 
 
 if __name__ == '__main__':
