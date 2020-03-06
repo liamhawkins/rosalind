@@ -1,3 +1,5 @@
+import itertools
+from functools import reduce
 from typing import Dict, List, Tuple
 
 from tools.Fasta import Fasta
@@ -84,6 +86,44 @@ def hamming(s: str, t: str) -> int:
     for x, y in zip(s, t):
         num += x != y
     return num
+
+
+Profile = Dict[str, List[int]]
+
+
+def consensus_from_profile(profile: Profile) -> object:
+    consensus_list: List[str] = []
+    for position in range(len(profile['A'])):
+        position_nuc: str = ''
+        max_count = max([nuclist[position] for nuclist in profile.values()])
+        for nuc in profile.keys():
+            if profile[nuc][position] == max_count:
+                position_nuc += nuc
+        consensus_list.append(position_nuc)
+
+    num_consensus = reduce(lambda x, y: x*y, [len(x) for x in consensus_list])
+    if num_consensus > 1000:
+        print('Too many possible concensus sequences, returning first')
+        return [Fasta(id_='concensus_1', sequence=''.join([x[0] for x in consensus_list]))]
+    consensus_seqs: List[str] = [''.join(str(y) for y in x) for x in itertools.product(*consensus_list)]
+    return [Fasta(id_=f'concensus_{i+1}', sequence=seq) for i, seq in enumerate(consensus_seqs)]
+
+
+def get_consensus(fastas: List[Fasta]) -> Tuple[List[Fasta], Profile]:
+    if len(set([fasta_len := len(x) for x in fastas])) != 1:
+        raise ValueError('Fasta sequences must be the same length')
+    profile: Profile = {
+        'A': [],
+        'C': [],
+        'G': [],
+        'T': []
+    }
+    for position in range(fasta_len):
+        for nuc in profile.keys():
+            profile[nuc].append(sum([fasta[position] == nuc for fasta in fastas]))
+
+    consensus: List[Fasta] = consensus_from_profile(profile)
+    return consensus, profile
 
 
 if __name__ == '__main__':

@@ -1,9 +1,8 @@
-from itertools import permutations
 from typing import List, Tuple, Dict, Set
 
 from tools.Fasta import Fasta
 from tools.Graph import Graph
-from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming
+from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming, get_consensus
 from tools.resources import CODON_MAP
 
 
@@ -76,8 +75,8 @@ def finding_a_motif_in_DNA(s: str) -> str:
     t: str
     s, t = [x.strip() for x in s.split('\n')]
     locations: List[str] = []
-    for index in range(len(s)-len(t)):
-        if t == s[index:index+len(t)]:
+    for index in range(len(s) - len(t)):
+        if t == s[index:index + len(t)]:
             locations.append(str(index + 1))
     return ' '.join(locations)
 
@@ -116,17 +115,17 @@ def mendels_first_law(s: str) -> float:
     n: int
     k, m, n = (int(x) for x in s.split())
     total: int = k + m + n
-    k_k: float = (k/total) * ((k-1)/(total-1)) * 1.0
-    k_m: float = (k/total) * (m/(total-1)) * 1.0
-    k_n: float = (k/total) * (n/(total-1)) * 1.0
+    k_k: float = (k / total) * ((k - 1) / (total - 1)) * 1.0
+    k_m: float = (k / total) * (m / (total - 1)) * 1.0
+    k_n: float = (k / total) * (n / (total - 1)) * 1.0
 
-    m_k: float = (m/total) * (k/(total-1)) * 1.0
-    m_m: float = (m/total) * ((m-1)/(total-1)) * 0.75
-    m_n: float = (m/total) * (n/(total-1)) * 0.5
+    m_k: float = (m / total) * (k / (total - 1)) * 1.0
+    m_m: float = (m / total) * ((m - 1) / (total - 1)) * 0.75
+    m_n: float = (m / total) * (n / (total - 1)) * 0.5
 
-    n_k: float = (n/total) * (k/(total-1)) * 1.0
-    n_m: float = (n/total) * (m/(total-1)) * 0.5
-    n_n: float = (n/total) * ((n-1)/(total-1)) * 0.0
+    n_k: float = (n / total) * (k / (total - 1)) * 1.0
+    n_m: float = (n / total) * (m / (total - 1)) * 0.5
+    n_n: float = (n / total) * ((n - 1) / (total - 1)) * 0.0
 
     return sum([k_k, k_m, k_n, m_k, m_m, m_n, n_k, n_m, n_n])
 
@@ -153,6 +152,7 @@ def rabbits_and_recurrance_relations(s: str) -> int:
     Return: The total number of rabbit pairs that will be present after n months, if we begin with 1 pair and in each
     generation, every pair of reproduction-age rabbits produces a litter of k rabbit pairs (instead of only 1 pair).
     """
+
     def breed(n: int, k: int):
         if n == 0:
             return 0
@@ -206,7 +206,7 @@ def finding_a_spliced_motif(inp: str) -> str:
     first_index_group: List[str] = []
     last_ind: int = 0
     for x in t:
-        ind: int = s.find(x, last_ind+1) + 1
+        ind: int = s.find(x, last_ind + 1) + 1
         first_index_group.append(str(ind))
         last_ind = ind
     return ' '.join(first_index_group)
@@ -225,7 +225,7 @@ def transition_transversion_ratio(s: str) -> float:
     for b1, b2 in zip(fastas[0].sequence, fastas[1].sequence):
         transition += is_transition(b1, b2)
         transversion += is_transversion(b1, b2)
-    return transition/transversion
+    return transition / transversion
 
 
 def calculate_expected_offspring(s: str) -> float:
@@ -244,7 +244,7 @@ def calculate_expected_offspring(s: str) -> float:
     assumption that every couple has exactly two offspring.
     """
     i: List[int] = [int(x) for x in s.split()]
-    return (i[0] + i[1] + i[2] + (i[3]*0.75) + (i[4]*0.5)) * 2
+    return (i[0] + i[1] + i[2] + (i[3] * 0.75) + (i[4] * 0.5)) * 2
 
 
 def overlap_graphs(s):
@@ -318,6 +318,19 @@ def error_correction_in_reads(s: str) -> str:
         ret.append(f'{read.sequence}->{hamming_1.sequence}')
 
     return '\n'.join(ret)
+
+
+def concensus_and_profile(s: str) -> str:
+    """
+    Given: A collection of at most 10 DNA strings of equal length (at most 1 kbp) in FASTA format.
+
+    Return: A consensus string and profile matrix for the collection. (If several possible consensus strings exist,
+    then you may return any one of them.)
+    """
+    fastas: List[Fasta] = Fasta.from_str(s)
+    concensus, profile = get_consensus(fastas)
+    profile_str: str = f'A: {" ".join([str(x) for x in profile["A"]])}\nC: {" ".join([str(x) for x in profile["C"]])}\nG: {" ".join([str(x) for x in profile["G"]])}\nT: {" ".join([str(x) for x in profile["T"]])}'
+    return f'{concensus[0].sequence}\n{profile_str}'
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     translating_RNA_into_protein, calculating_protein_mass, mendels_first_law, inferring_mRNA_from_protein, \
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
-    genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads
+    genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -194,6 +194,29 @@ TTTCC"""
 GAGGA->GATGA
 TTTCC->TTTCA"""
     assert error_correction_in_reads(in_) == out
+
+
+def test_concensus_and_profile() -> None:
+    in_: str = """>Rosalind_1
+ATCCAGCT
+>Rosalind_2
+GGGCAACT
+>Rosalind_3
+ATGGATCT
+>Rosalind_4
+AAGCAACC
+>Rosalind_5
+TTGGAACT
+>Rosalind_6
+ATGCCATT
+>Rosalind_7
+ATGGCACT"""
+    out = """ATGCAACT
+A: 5 1 0 0 5 5 0 0
+C: 0 0 1 4 2 0 6 1
+G: 1 1 6 3 0 1 0 0
+T: 1 5 0 0 0 1 1 6"""
+    assert concensus_and_profile(in_) == out
 
 
 if __name__ == '__main__':
