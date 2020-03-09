@@ -48,6 +48,9 @@ class Fasta:
     def __hash__(self):
         return hash(self.sequence)
 
+    def __contains__(self, item):
+        return item in self.sequence
+
     @property
     def gc(self) -> float:
         c = self.sequence.count('C')

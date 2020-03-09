@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Dict, Set, Optional
 
 from tools.Fasta import Fasta
 from tools.Graph import Graph
@@ -349,6 +349,42 @@ def creating_a_distance_matrix(s: str) -> str:
         distances.append(f_dists)
         
     return "\n".join(distances)
+
+
+def finding_a_shared_motif(s: str) -> str:
+    """
+    Given: A collection of k (k≤100) DNA strings of length at most 1 kbp each in FASTA format.
+
+    Return: A longest common substring of the collection. (If multiple solutions exist, you may return any single
+    solution.)
+    """
+
+    def find_motif(fastas: List[Fasta], seq_len: int) -> Optional[str]:
+        for f in fastas:
+            motifs: Set[str] = {f[i:i+seq_len] for i in range(len(f)-seq_len + 1) if all([f[i:i+seq_len] in fasta for fasta in fastas])}
+            if len(motifs) > 0:
+                for first in motifs: return first  # Hacky way of getting one elem from set
+        return
+
+    def bin_motif_search(fastas: List[Fasta], lengths: List[int], last_found_motif: str) -> str:
+        if len(lengths) == 1:
+            new: str
+            if new := find_motif(fastas, lengths[0]):
+                return new
+            else:
+                return last_found_motif
+        mid_length_index: int = len(lengths) // 2
+        mid_length_value: int = lengths[mid_length_index]
+        motif: Optional[str] = find_motif(fastas, mid_length_value)
+        if not motif:
+            return bin_motif_search(fastas, lengths[:mid_length_index], last_found_motif)
+        else:
+            return bin_motif_search(fastas, lengths[mid_length_index:], motif)
+
+    fastas: List[Fasta] = Fasta.from_str(s)
+    seq_len: int = max([len(f) for f in fastas])
+
+    return bin_motif_search(fastas, list(range(seq_len)), '')
 
 
 if __name__ == '__main__':

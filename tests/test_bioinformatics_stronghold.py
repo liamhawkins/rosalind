@@ -1,5 +1,5 @@
 import unittest
-from typing import Set
+from typing import Set, List
 
 import pytest
 
@@ -9,7 +9,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
     genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile, \
-    creating_a_distance_matrix
+    creating_a_distance_matrix, finding_a_shared_motif
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -234,6 +234,17 @@ GTTCCATTTA"""
 0.10000 0.40000 0.00000 0.20000
 0.10000 0.30000 0.20000 0.00000"""
     assert creating_a_distance_matrix(in_) == out
+
+
+def test_finding_a_shared_motif() -> None:
+    in_: str = """>Rosalind_1
+GATTACA
+>Rosalind_2
+TAGACCA
+>Rosalind_3
+ATACA"""
+    out: List[str] = ['AC', 'CA', 'TA']
+    assert finding_a_shared_motif(in_) in out
 
 
 if __name__ == '__main__':
