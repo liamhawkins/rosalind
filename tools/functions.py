@@ -126,6 +126,10 @@ def get_consensus(fastas: List[Fasta]) -> Tuple[List[Fasta], Profile]:
     return consensus, profile
 
 
+def pdistance(f1: Fasta, f2: Fasta) -> float:
+    return hamming(f1.sequence, f2.sequence)/len(f1)
+
+
 if __name__ == '__main__':
     sorted_array = [0,1,2,3,4,5,6,7]
     print(bin_search(8, sorted_array))

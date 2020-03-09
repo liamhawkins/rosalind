@@ -8,7 +8,8 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     translating_RNA_into_protein, calculating_protein_mass, mendels_first_law, inferring_mRNA_from_protein, \
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
-    genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile
+    genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile, \
+    creating_a_distance_matrix
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -217,6 +218,22 @@ C: 0 0 1 4 2 0 6 1
 G: 1 1 6 3 0 1 0 0
 T: 1 5 0 0 0 1 1 6"""
     assert concensus_and_profile(in_) == out
+
+
+def test_creating_a_distance_matrix() -> None:
+    in_: str = """>Rosalind_9499
+TTTCCATTTA
+>Rosalind_0942
+GATTCATTTC
+>Rosalind_6568
+TTTCCATTTT
+>Rosalind_1833
+GTTCCATTTA"""
+    out: str = """0.00000 0.40000 0.10000 0.10000
+0.40000 0.00000 0.40000 0.30000
+0.10000 0.40000 0.00000 0.20000
+0.10000 0.30000 0.20000 0.00000"""
+    assert creating_a_distance_matrix(in_) == out
 
 
 if __name__ == '__main__':

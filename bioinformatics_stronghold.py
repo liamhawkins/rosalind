@@ -2,7 +2,8 @@ from typing import List, Tuple, Dict, Set
 
 from tools.Fasta import Fasta
 from tools.Graph import Graph
-from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming, get_consensus
+from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming, get_consensus, \
+    pdistance
 from tools.resources import CODON_MAP
 
 
@@ -331,6 +332,23 @@ def concensus_and_profile(s: str) -> str:
     concensus, profile = get_consensus(fastas)
     profile_str: str = f'A: {" ".join([str(x) for x in profile["A"]])}\nC: {" ".join([str(x) for x in profile["C"]])}\nG: {" ".join([str(x) for x in profile["G"]])}\nT: {" ".join([str(x) for x in profile["T"]])}'
     return f'{concensus[0].sequence}\n{profile_str}'
+
+
+def creating_a_distance_matrix(s: str) -> str:
+    """
+    Given: A collection of n (n≤10) DNA strings s1,…,sn of equal length (at most 1 kbp). Strings are given in FASTA
+    format.
+
+    Return: The matrix D corresponding to the p-distance dp on the given strings. As always, note that your answer is
+    allowed an absolute error of 0.001.
+    """
+    fastas: List[Fasta] = Fasta.from_str(s)
+    distances: List[str] = []
+    for f in fastas:
+        f_dists: str = " ".join(["{0:.5f}".format(pdistance(f, fasta)) for fasta in fastas])
+        distances.append(f_dists)
+        
+    return "\n".join(distances)
 
 
 if __name__ == '__main__':
