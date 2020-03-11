@@ -130,6 +130,17 @@ def pdistance(f1: Fasta, f2: Fasta) -> float:
     return hamming(f1.sequence, f2.sequence)/len(f1)
 
 
+def is_reverse_palindrome(seq: str) -> bool:
+    if len(seq) % 2 != 0:
+        return False
+    first_half = seq[:len(seq) // 2]
+    second_half = seq[len(seq) // 2:]
+    if first_half == Fasta(sequence=second_half).reverse_complement().sequence:
+        return True
+    else:
+        return False
+
+
 if __name__ == '__main__':
     sorted_array = [0,1,2,3,4,5,6,7]
     print(bin_search(8, sorted_array))
