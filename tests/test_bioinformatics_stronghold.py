@@ -9,7 +9,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
     genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile, \
-    creating_a_distance_matrix, finding_a_shared_motif, mortal_fibonacci_rabbits
+    creating_a_distance_matrix, finding_a_shared_motif, mortal_fibonacci_rabbits, locating_restriction_sites
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -245,6 +245,22 @@ TAGACCA
 ATACA"""
     out: List[str] = ['AC', 'CA', 'TA']
     assert finding_a_shared_motif(in_) in out
+
+
+def test_locating_restriction_sites() -> None:
+    in_: str = """>Rosalind_24
+TCAATGCATGCGGGTCTATATGCAT"""
+    out: Set[tuple] = {
+        (4, 6),
+        (5, 4),
+        (6, 6),
+        (7, 4),
+        (17, 4),
+        (18, 4),
+        (20, 6),
+        (21, 4)
+    }
+    assert locating_restriction_sites(in_) == out
 
 
 def test_mortal_fibonacci_rabbits() -> None:

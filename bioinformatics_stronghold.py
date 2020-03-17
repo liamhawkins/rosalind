@@ -3,7 +3,7 @@ from typing import List, Tuple, Dict, Set, Optional
 from tools.Fasta import Fasta
 from tools.Graph import Graph
 from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming, get_consensus, \
-    pdistance
+    pdistance, is_reverse_palindrome
 from tools.resources import CODON_MAP
 
 
@@ -387,6 +387,22 @@ def finding_a_shared_motif(s: str) -> str:
     return bin_motif_search(fastas, list(range(seq_len)), '')
 
 
+def locating_restriction_sites(s: str) -> Set[tuple]:
+    """
+    Given: A DNA string of length at most 1 kbp in FASTA format.
+
+    Return: The position and length of every reverse palindrome in the string having length between 4 and 12. You may return these pairs in any order.
+    """
+    fasta: Fasta = Fasta.from_str(s)[0]
+    sites: Set[tuple] = set()
+
+    for length in range(2, 6+1):
+        for start in range(0, len(fasta)-2*length + 1):
+            if is_reverse_palindrome(fasta[start:start+(2*length)]):
+                sites.add((start+1, length*2))
+    return sites
+
+
 def mortal_fibonacci_rabbits(s: str) -> int:
     """
     Given: Positive integers n≤100 and m≤20.
@@ -421,5 +437,4 @@ def mortal_fibonacci_rabbits(s: str) -> int:
 
 
 if __name__ == '__main__':
-    in_: str = "87 18"
-    print(mortal_fibonacci_rabbits(in_))
+    pass
