@@ -387,5 +387,39 @@ def finding_a_shared_motif(s: str) -> str:
     return bin_motif_search(fastas, list(range(seq_len)), '')
 
 
+def mortal_fibonacci_rabbits(s: str) -> int:
+    """
+    Given: Positive integers n≤100 and m≤20.
+
+    Return: The total number of pairs of rabbits that will remain after the n-th month if all rabbits live for m months.
+    """
+    def breed(n: int, m: int, lookup: dict = None):
+        if not lookup:
+            lookup = {
+                0: {
+                    'child': 0,
+                    'adult': 0,
+                },
+                1: {
+                    'child': 1,
+                    'adult': 0,
+                },
+            }
+        try:
+            return lookup[n]
+        except KeyError:
+            lookup[n-1] = breed(n-1, m, lookup)
+            children = lookup[n-1]['adult']
+            adults = lookup[n-1]['child'] + lookup[n-1]['adult'] - lookup.get(n-m, {'child': 0})['child']
+            return {'child': children, 'adult': adults}
+
+    n: int
+    m: int
+    n, m = (int(x) for x in s.split())
+    res = breed(n, m)
+    return res['child'] + res['adult']
+
+
 if __name__ == '__main__':
-    pass
+    in_: str = "87 18"
+    print(mortal_fibonacci_rabbits(in_))

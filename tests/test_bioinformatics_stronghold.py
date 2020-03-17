@@ -9,7 +9,7 @@ from bioinformatics_stronghold import counting_DNA_nucleotides, transcribing_DNA
     rabbits_and_recurrance_relations, open_reading_frames, RNA_splicing, finding_a_spliced_motif, \
     transition_transversion_ratio, calculate_expected_offspring, overlap_graphs, \
     genome_assembly_as_shortest_superstring, completing_a_tree, error_correction_in_reads, concensus_and_profile, \
-    creating_a_distance_matrix, finding_a_shared_motif
+    creating_a_distance_matrix, finding_a_shared_motif, mortal_fibonacci_rabbits
 
 
 def test_counting_DNA_nucleotides() -> None:
@@ -245,6 +245,12 @@ TAGACCA
 ATACA"""
     out: List[str] = ['AC', 'CA', 'TA']
     assert finding_a_shared_motif(in_) in out
+
+
+def test_mortal_fibonacci_rabbits() -> None:
+    in_: str = "6 3"
+    out: int = 4
+    assert mortal_fibonacci_rabbits(in_) == out
 
 
 if __name__ == '__main__':
