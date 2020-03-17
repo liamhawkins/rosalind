@@ -1,4 +1,5 @@
-from typing import List, Tuple, Dict, Set, Optional
+from itertools import permutations
+from typing import List, Tuple, Dict, Set, Optional, Any
 
 from tools.Fasta import Fasta
 from tools.Graph import Graph
@@ -436,5 +437,18 @@ def mortal_fibonacci_rabbits(s: str) -> int:
     return res['child'] + res['adult']
 
 
+def enumerating_gene_orders(n: int) -> str:
+    """
+    Given: A positive integer n≤7.
+
+    Return: The total number of permutations of length n, followed by a list of all such permutations (in any order).
+    """
+    perms: List[Tuple[Any, ...]] = list(permutations(range(1, n+1)))
+    len_perms: str = str(len(perms))
+    perm_str: str = '\n'.join([' '.join(list(map(str, p))) for p in perms])
+    return f'{len_perms}\n{perm_str}'
+
+
 if __name__ == '__main__':
-    pass
+    in_: int = 7
+    print(enumerating_gene_orders(in_))
