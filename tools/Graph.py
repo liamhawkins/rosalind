@@ -1,5 +1,6 @@
+from collections import namedtuple
 from itertools import permutations
-from typing import List, Any, Union, Tuple, Optional, Set
+from typing import List, Any, Union, Tuple, Optional, Set, Type
 
 
 class NodeNotInGraphError(Exception):
@@ -23,6 +24,9 @@ class Node:
     def __hash__(self):
         return hash(self.obj)
 
+    def __eq__(self, other):
+        return self.obj == other.obj
+
     def __contains__(self, item):
         return item == self.obj
 
@@ -42,7 +46,29 @@ class Node:
         return self.degree > 0
 
     def add_edge(self, edge: 'Edge') -> None:
-        self.edges.append(edge)
+        other_node = edge.node1 if self != edge.node1 else edge.node2
+
+        if edge not in self.edges:
+            self.edges.append(edge)
+
+        if not edge.directed:
+            self.add_incoming(other_node)
+            self.add_outgoing(other_node)
+        else:
+            if edge.node1 == self:
+                self.add_outgoing(other_node)
+            else:
+                self.add_incoming(other_node)
+
+    def remove_edge(self, edge: 'Edge') -> None:
+        other_node = edge.node1 if self != edge.node1 else edge.node2
+        self.edges = [e for e in self.edges if e != edge]
+        self.outgoing_nodes = [e for e in self.outgoing_nodes if e != other_node]
+        self.incoming_nodes = [e for e in self.incoming_nodes if e != other_node]
+        edge_nodes = []
+        for edge in self.edges:
+            edge_nodes.extend(edge.nodes)
+        self.neighbors = [e for e in self.neighbors if e not in edge_nodes]
 
     def add_outgoing(self, node: 'Node') -> None:
         if node not in self.outgoing_nodes:
@@ -67,29 +93,38 @@ class Node:
 
 
 class Edge:
-    def __init__(self, node1: Node, node2: Node, directed: bool = False):
-        node1.add_edge(self)
-        node2.add_edge(self)
-
-        node1.add_outgoing(node2)
-        node2.add_incoming(node1)
-
-        if not directed:
-            node1.add_incoming(node2)
-            node2.add_outgoing(node1)
-
+    def __init__(self, node1: Node, node2: Node, directed: bool = False, tag: str = None):
         self.node1: Node = node1
         self.node2: Node = node2
+        self.nodes: List[Node] = [node1, node2]
         self.directed: bool = directed
+        self.tag: str = tag
+
+        self.node1.add_edge(self)
+        self.node2.add_edge(self)
 
     def __str__(self) -> str:
         if self.directed:
-            return f'{self.node1}-->{self.node2}'
+            s: str = f'{self.node1}-->{self.node2}'
         else:
-            return f'{self.node1}<--->{self.node2}'
+            s: str = f'{self.node1}<--->{self.node2}'
+        if self.tag:
+            s += f' Tag:{self.tag}'
+        return s
+
+    def __eq__(self, other):
+        if self.directed:
+            return self.node1 == other.node1 and self.node2 == other.node2 and self.tag == other.tag
+        else:
+            return self.node1 in [other.node1, other.node2] and self.node2 in [other.node1, other.node2] and self.tag == other.tag
 
     def __repr__(self) -> str:
-        return f'Edge({repr(self.node1)}, {repr(self.node2)}, {self.directed})'
+        return f'Edge({repr(self.node1)}, {repr(self.node2)}, {self.directed}, {self.tag})'
+
+    def __del__(self):
+        self.node1.remove_edge(self)
+        self.node2.remove_edge(self)
+        del self
 
 
 class Graph:
@@ -119,12 +154,24 @@ class Graph:
             nodes.append(node)
         return nodes
 
-    def add_edge(self, node1: Node, node2: Node) -> Edge:
+    def add_edge(self, node1: Node, node2: Node, tag: str = None) -> Edge:
         if node1 not in self or node2 not in self:
             raise NodeNotInGraphError("Can't create edge between one or more nodes not in the graph")
-        edge: Edge = Edge(node1, node2, directed=self.directed)
-        self.edges.append(edge)
-        return edge
+        edge: Edge = Edge(node1, node2, directed=self.directed, tag=tag)
+        if edge not in self.edges:
+            self.edges.append(edge)
+            return edge
+        else:
+            return [e for e in self.edges if e == edge][0]
+
+    def remove_edge(self, edge: Edge):
+        self.edges = [e for e in self.edges if e != edge]
+        edge.__del__()
+
+    def remove_edge_and_nodes(self, edge: Edge):
+        self.remove_edge(edge)
+        self.nodes = [n for n in self.nodes if len(n.neighbors) != 0]
+        return self
 
     def join_nodes_by_func(self, f):
         for n1, n2 in permutations(self.nodes, r=2):
@@ -181,6 +228,24 @@ class Graph:
             g.add_edge(node1, node2)
         return g
 
+    @classmethod
+    def from_nucleotide_sequence(cls, s: str) -> 'Graph':
+        """
+        Creates adjacency graph from nucleotide sequence
+        """
+        if not s:
+            raise ValueError('Graph cannot be made from empty string')
+
+        g: Graph = Graph()
+        prev_node: Optional[Node] = None
+        Base: Type['Base'] = namedtuple('base', ['nucleotide', 'index'])
+        for i, nuc in enumerate(s):
+            node: Node = g.add_node(Base(nuc, i))
+            if prev_node:
+                g.add_edge(prev_node, node, tag='adj')
+            prev_node = node
+        return g
+
     def disconnected_subgraphs(self) -> List[Set[Node]]:
         fills: List[Set[Node]] = []
         for node in self.nodes:
@@ -211,6 +276,10 @@ class Graph:
         for neigh in next_nodes:
             filled.union(self.fill_from_node(neigh, node, filled))
         return filled
+
+    @staticmethod
+    def are_connected(node1, node2):
+        return node2 in node1.neighbors
 
 
 if __name__ == '__main__':

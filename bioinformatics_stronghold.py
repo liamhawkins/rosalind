@@ -1,11 +1,12 @@
-from itertools import permutations
+from copy import deepcopy
+from itertools import permutations, combinations
 from typing import List, Tuple, Dict, Set, Optional, Any
 
 from tools.Fasta import Fasta
-from tools.Graph import Graph
+from tools.Graph import Graph, Node, Edge
 from tools.functions import is_transition, is_transversion, overlap, max_overlap, join_reads, hamming, get_consensus, \
-    pdistance, is_reverse_palindrome
-from tools.resources import CODON_MAP
+    pdistance, is_reverse_palindrome, is_complement
+from tools.resources import CODON_MAP, COMPLEMENT_RNA
 
 
 def counting_DNA_nucleotides(s: str) -> str:
@@ -449,6 +450,45 @@ def enumerating_gene_orders(n: int) -> str:
     return f'{len_perms}\n{perm_str}'
 
 
+# def perfect_matching_and_RNA_secondary_structures(s: str) -> int:
+#     """
+#     Given: An RNA string s of length at most 80 bp having the same number of occurrences of 'A' as 'U' and the same
+#     number of occurrences of 'C' as 'G'.
+#
+#     Return: The total possible number of perfect matchings of basepair edges in the bonding graph of s.
+#     """
+#     fasta: Fasta = Fasta.from_str(s)[0]
+#
+#     # Create bonding graph
+#     g: Graph = Graph.from_nucleotide_sequence(fasta.sequence)
+#     for node1 in g.nodes:
+#         for node2 in g.nodes:
+#             if is_complement(node1.obj.nucleotide, node2.obj.nucleotide, 'RNA'):
+#                 g.add_edge(node1, node2)
+#
+#     for e in g.edges:
+#         if e.tag == 'adj':
+#             g.remove_edge(e)
+#
+#     num_perfect_matchings: int = 0
+#
+#     def can_produce_matching(graph):
+#         if len(graph.edges) == 1:
+#             return len(graph.nodes) == 2
+#         else:
+#             g_new = deepcopy(graph)
+#             return any([can_produce_matching(g_new.remove_edge_and_nodes(e)) for e in g_new.edges])
+#
+#     for starting_edge in [e for e in g.edges if e.tag != 'adj']:
+#         g.remove_edge_and_nodes(starting_edge)
+#         if can_produce_matching(g):
+#             num_perfect_matchings += 1
+#
+#     return num_perfect_matchings
+
+
+
 if __name__ == '__main__':
-    in_: int = 7
-    print(enumerating_gene_orders(in_))
+    in_: str = """>Rosalind_23
+AGCUAGUCAU"""
+    # print(perfect_matching_and_RNA_secondary_structures(in_))

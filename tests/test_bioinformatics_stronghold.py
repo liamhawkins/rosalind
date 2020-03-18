@@ -282,5 +282,12 @@ def test_enumerating_gene_orders() -> None:
     assert enumerating_gene_orders(in_) == out
 
 
+# def test_perfect_matching_and_RNA_secondary_structures() -> None:
+#     in_: str = """>Rosalind_23
+# AGCUAGUCAU"""
+#     out: int = 12
+#     assert perfect_matching_and_RNA_secondary_structures(in_) == out
+
+
 if __name__ == '__main__':
     unittest.main()
